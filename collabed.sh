@@ -4,14 +4,28 @@
 #after that's up and going we'll start making calls to see if the defined Item ID has any parents
 #and check those too.
 
-
 source config.sh
 
-#echo $mytable
+# TODO set it up to read any positional argumants to the command
+# set default variables for item and user
 
+user=$default_user_id
+read -p "what User ID? " user
+check=${#user}
+if [ $check -lt 1 ]; then
+    user="$default_user_id"
+#    echo "okay can just use the default user ID of $user"
+fi
+
+item=$default_item_id
 read -p "what Item ID? " item
+check=${#item}
 
-myvariable=$(bq query --nouse_legacy_sql --format=prettyjson\
+if [ $check -lt 1 ]; then
+    item="$default_item_id"
+fi
+
+query=$(bq query --nouse_legacy_sql --format=prettyjson\
     'SELECT
         user_id
      FROM
@@ -19,4 +33,4 @@ myvariable=$(bq query --nouse_legacy_sql --format=prettyjson\
      WHERE
          item_id='$item)
 
-echo $myvariable | jq -s
+echo $query | jq -s
