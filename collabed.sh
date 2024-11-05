@@ -33,4 +33,19 @@ query=$(bq query --nouse_legacy_sql --format=prettyjson\
      WHERE
          item_id='$item)
 
-echo $query | jq -s
+user_ids=$(echo $query | jq -r '.[].user_id')
+
+for user_id in $user_ids; do
+  #echo "one user collaborated on the file is: " $user_id
+    if [ "$user_id" -eq "$user" ]; then
+        echo "okay I see that $user is collaborated on $item"
+        iscollabed=yes
+        break
+    fi
+done
+
+if [[ "$iscollabed" != "yes" ]]; then
+   echo "okay the user is not directly collabed on the item,"
+   echo "although it's possible it could still have access via"
+   echo "either waterfalling or group membership"
+fi
